@@ -1,10 +1,6 @@
 backend:
-  name: github
-  repo: gzussy/palhaza
+  name: git-gateway
   branch: main
-  client_id: Ov23liTeEBEwWZZbDXnJ
-
-# Itt ne legyen base_url, de ellenőrizd, hogy a dist mappa frissült-e!
 
 media_folder: "public/uploads"
 public_folder: "/uploads"
