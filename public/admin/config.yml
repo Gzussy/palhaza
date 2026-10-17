@@ -2,6 +2,8 @@ backend:
   name: git-gateway
   branch: main
 
+# Itt ne legyen base_url, de ellenőrizd, hogy a dist mappa frissült-e!
+
 media_folder: "public/uploads"
 public_folder: "/uploads"
 
