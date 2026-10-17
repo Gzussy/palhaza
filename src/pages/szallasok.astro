@@ -1,0 +1,172 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const szallasokEntries = await getCollection('szallasok');
+---
+
+<Layout title="Szállások - Pálháza Város" activePage="szallasok">
+
+    <main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        <div class="mb-12 text-center md:text-left">
+            <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm">
+                Vendéglátás & Pihenés
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
+                Szálláslehetőségek
+            </h1>
+            <p class="text-slate-300 max-w-2xl text-base md:text-lg">
+                Találja meg a tökéletes pihenőhelyet Pálházán: vendégházak, apartmanok és turistaházak.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {szallasokEntries.map((entry) => {
+                const szallas = entry.data;
+                const kepekJson = JSON.stringify(szallas.kepek || []);
+                const boritoKep = szallas.kepek && szallas.kepek.length > 0 ? szallas.kepek[0] : null;
+
+                return (
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 hover:border-emerald-400/50 transition-all duration-300 shadow-xl flex flex-col justify-between overflow-hidden group">
+                        
+                        <!-- BORÍTÓKÉP VAGY DEFAULT IKON HEADER -->
+                        <div class="relative h-48 w-full overflow-hidden bg-emerald-950/40">
+                            {boritoKep ? (
+                                <img 
+                                    src={boritoKep} 
+                                    alt={szallas.title} 
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer open-gallery-btn"
+                                    data-images={kepekJson}
+                                    data-title={szallas.title}
+                                />
+                            ) : (
+                                <div class="w-full h-full flex items-center justify-center text-5xl">
+                                    {szallas.ikon || "🏡"}
+                                </div>
+                            )}
+
+                            {szallas.kepek && szallas.kepek.length > 0 && (
+                                <button 
+                                    class="open-gallery-btn absolute bottom-3 right-3 bg-black/60 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/20 transition-all flex items-center gap-1.5"
+                                    data-images={kepekJson}
+                                    data-title={szallas.title}>
+                                    📷 {szallas.kepek.length} kép
+                                </button>
+                            )}
+                        </div>
+
+                        <!-- KÁRTYA TARTALOM -->
+                        <div class="p-6 flex-1 flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">{szallas.tipus}</span>
+                                    <span class="text-xs text-slate-300 font-medium bg-black/30 px-2 py-0.5 rounded">👥 {szallas.kapacitas}</span>
+                                </div>
+                                <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-emerald-300 transition-colors">{szallas.title}</h2>
+                                <p class="text-slate-300 text-sm leading-relaxed mb-6">{szallas.leiras}</p>
+                            </div>
+
+                            <a 
+                                href={`tel:${szallas.tel.replace(/\s+/g, '')}`} 
+                                class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl backdrop-blur-md border border-emerald-400/30 transition-all duration-300 hover:scale-[1.02] shadow-md text-sm">
+                                <span>📞 {szallas.tel}</span>
+                            </a>
+                        </div>
+
+                    </div>
+                );
+            })}
+        </div>
+    </main>
+
+    <!-- KÉPNÉZEGETŐ MODAL (LIGHTBOX) -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col justify-between p-4 md:p-8">
+        <!-- RÉSZLETEK ÉS BEZÁRÁS -->
+        <div class="flex justify-between items-center text-white z-10 max-w-6xl mx-auto w-full">
+            <div>
+                <h3 id="lightbox-title" class="text-xl font-bold"></h3>
+                <span id="lightbox-counter" class="text-xs text-slate-400"></span>
+            </div>
+            <button id="lightbox-close" class="text-3xl hover:text-emerald-400 transition-colors px-3 py-1">&times;</button>
+        </div>
+
+        <!-- FŐ KÉP ÉS NAVIGÁCIÓ -->
+        <div class="relative flex-1 flex items-center justify-center my-4 max-w-6xl mx-auto w-full">
+            <button id="lightbox-prev" class="absolute left-2 md:left-4 z-20 text-white bg-black/50 hover:bg-emerald-600 p-3 rounded-full backdrop-blur-sm transition-all text-xl">&larr;</button>
+            
+            <img id="lightbox-img" src="" alt="Galéria kép" class="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl transition-all duration-300" />
+            
+            <button id="lightbox-next" class="absolute right-2 md:right-4 z-20 text-white bg-black/50 hover:bg-emerald-600 p-3 rounded-full backdrop-blur-sm transition-all text-xl">&rarr;</button>
+        </div>
+
+        <div></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const lightbox = document.getElementById("lightbox") as HTMLElement;
+            const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+            const lightboxTitle = document.getElementById("lightbox-title") as HTMLElement;
+            const lightboxCounter = document.getElementById("lightbox-counter") as HTMLElement;
+            const closeBtn = document.getElementById("lightbox-close");
+            const prevBtn = document.getElementById("lightbox-prev");
+            const nextBtn = document.getElementById("lightbox-next");
+
+            let currentImages: string[] = [];
+            let currentIndex = 0;
+
+            // Galéria megnyitása
+            document.querySelectorAll(".open-gallery-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    const imagesData = target.getAttribute("data-images");
+                    const title = target.getAttribute("data-title") || "";
+
+                    if (imagesData) {
+                        currentImages = JSON.parse(imagesData);
+                        if (currentImages.length > 0) {
+                            currentIndex = 0;
+                            lightboxTitle.textContent = title;
+                            updateLightbox();
+                            lightbox.classList.remove("hidden");
+                            lightbox.classList.add("flex");
+                        }
+                    }
+                });
+            });
+
+            function updateLightbox() {
+                if (currentImages.length > 0) {
+                    lightboxImg.src = currentImages[currentIndex];
+                    lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+                }
+            }
+
+            // Léptetések
+            nextBtn?.addEventListener("click", () => {
+                currentIndex = (currentIndex + 1) % currentImages.length;
+                updateLightbox();
+            });
+
+            prevBtn?.addEventListener("click", () => {
+                currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+                updateLightbox();
+            });
+
+            // Bezárás
+            closeBtn?.addEventListener("click", () => {
+                lightbox.classList.add("hidden");
+                lightbox.classList.remove("flex");
+            });
+
+            // Billentyűzet navigáció (Esc, Nyilak)
+            document.addEventListener("keydown", (e) => {
+                if (!lightbox.classList.contains("hidden")) {
+                    if (e.key === "Escape") closeBtn?.click();
+                    if (e.key === "ArrowRight") nextBtn?.click();
+                    if (e.key === "ArrowLeft") prevBtn?.click();
+                }
+            });
+        });
+    </script>
+</Layout>

@@ -1,0 +1,130 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const rendelések = [
+	{
+		title: "Háziorvosi Rendelő",
+		icon: "🩺",
+		orvos: "Dr. Kovács István",
+		leiras: "Felnőtt háziorvosi ellátás, receptírás és szakorvosi beutalók kiadása.",
+		tel: "+36 47 370 020",
+		idopontok: [
+			{ nap: "Hétfő", ido: "08:00 – 12:00" },
+			{ nap: "Kedd", ido: "12:00 – 16:00" },
+			{ nap: "Szerda", ido: "08:00 – 12:00" },
+			{ nap: "Csütörtök", ido: "12:00 – 16:00" },
+			{ nap: "Péntek", ido: "08:00 – 12:00" }
+		]
+	},
+	{
+		title: "Gyermekorvosi Rendelő",
+		icon: "👶",
+		orvos: "Dr. Szabó Katalin",
+		leiras: "Csecsemő- és gyermekgyógyászati ellátás, kötelező védőoltások és tanácsadás.",
+		tel: "+36 47 370 021",
+		idopontok: [
+			{ nap: "Hétfő", ido: "08:00 – 11:00" },
+			{ nap: "Kedd", ido: "08:00 – 11:00 (Csecsemő tanácsadás)" },
+			{ nap: "Szerda", ido: "13:00 – 16:00" },
+			{ nap: "Csütörtök", ido: "08:00 – 11:00" },
+			{ nap: "Péntek", ido: "08:00 – 11:00" }
+		]
+	},
+	{
+		title: "Fogászati Rendelő",
+		icon: "🦷",
+		orvos: "Dr. Molnár Péter",
+		leiras: "Fogászati szűrés, kezelések, szájsebészet és sürgősségi ellátás.",
+		tel: "+36 47 370 022",
+		idopontok: [
+			{ nap: "Hétfő", ido: "12:00 – 18:00" },
+			{ nap: "Kedd", ido: "08:00 – 14:00" },
+			{ nap: "Szerda", ido: "12:00 – 18:00" },
+			{ nap: "Csütörtök", ido: "08:00 – 14:00" },
+			{ nap: "Péntek", ido: "08:00 – 12:00 (Iskolafogászat)" }
+		]
+	}
+];
+---
+
+<Layout title="Egészségügyi Rendelő - Pálháza Város" activePage="rendelo">
+
+	<main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+		<!-- FEJLÉC SZEKCIÓ -->
+		<div class="mb-12 text-center md:text-left">
+			<span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm">
+				Orvosi Ügyelet & Egészségügyi Ellátás
+			</span>
+			<h1 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
+				Egészségügyi Rendelő
+			</h1>
+			<p class="text-slate-300 max-w-2xl text-base md:text-lg">
+				Pálházi Orvosi Rendelő háziorvosi, gyermekorvosi és fogászati rendelési időpontjai, elérhetőségei és fontosabb információi.
+			</p>
+		</div>
+
+		<!-- ORVOSI RENDELÉSEK GRID -->
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+			{rendelések.map((item) => (
+				<div class="bg-white/10 backdrop-blur-md p-6 md:p-8 rounded-2xl border border-white/15 shadow-xl flex flex-col justify-between hover:border-emerald-400/40 transition-all duration-300">
+					<div>
+						<div class="flex items-center gap-4 mb-4">
+							<div class="w-12 h-12 bg-emerald-500/20 text-emerald-300 rounded-xl flex items-center justify-center font-bold text-2xl border border-emerald-500/30">
+								{item.icon}
+							</div>
+							<div>
+								<h2 class="text-2xl font-bold text-white">{item.title}</h2>
+								<p class="text-emerald-300 font-semibold text-sm">{item.orvos}</p>
+							</div>
+						</div>
+						<p class="text-slate-300 text-sm mb-6 leading-relaxed">
+							{item.leiras}
+						</p>
+
+						<!-- RENDELÉSI IDŐK TABLE -->
+						<div class="space-y-2 mb-6">
+							<h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Rendelési idő:</h3>
+							{item.idopontok.map((idő) => (
+								<div class="flex justify-between items-center text-xs md:text-sm border-b border-white/10 pb-2 text-slate-200">
+									<span class="font-medium text-slate-300">{idő.nap}:</span>
+									<span class="font-semibold text-white">{idő.ido}</span>
+								</div>
+							))}
+						</div>
+					</div>
+
+					<!-- TELEFONOS ELÉRHERŐSÉG GOMB -->
+					<div class="pt-4 border-t border-white/10">
+						<a 
+							href={`tel:${item.tel.replace(/\s+/g, '')}`} 
+							class="w-full inline-flex items-center justify-center gap-2 bg-emerald-600/80 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl backdrop-blur-md border border-emerald-400/30 transition-all duration-300 hover:scale-[1.02] shadow-lg text-sm">
+							<span>📞 Hívás: {item.tel}</span>
+						</a>
+					</div>
+				</div>
+			))}
+		</div>
+
+		<!-- SÜRGŐSSÉGI ÚTMUTATÓ / ÜGYELET BOX -->
+		<div class="bg-red-950/40 backdrop-blur-md p-8 rounded-2xl border border-red-500/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+			<div class="flex items-start gap-4">
+				<div class="w-12 h-12 bg-red-500/20 text-red-400 rounded-xl flex items-center justify-center font-bold text-2xl border border-red-500/30 shrink-0">
+					🚨
+				</div>
+				<div>
+					<h3 class="text-xl font-bold text-white mb-1">Központi Orvosi Ügyelet & Mentők</h3>
+					<p class="text-slate-300 text-sm">Rendelési időn kívül, hétvégén és ünnepnapokon a központi orvosi ügyelet hívható.</p>
+					<p class="text-xs text-red-300 font-semibold mt-2">Sürgős, életveszélyes esetben hívja a 112-es segélyhívót!</p>
+				</div>
+			</div>
+			<div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+				<a href="tel:1830" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 whitespace-nowrap text-center">
+					Ügyelet: 1830
+				</a>
+				<a href="tel:112" class="bg-white/10 hover:bg-white/20 text-white font-bold px-6 py-3 rounded-xl border border-white/20 backdrop-blur-md shadow-lg transition-all duration-300 hover:scale-105 whitespace-nowrap text-center">
+					Mentők: 112
+				</a>
+			</div>
+		</div>
+	</main>
+</Layout>

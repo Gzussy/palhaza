@@ -1,0 +1,73 @@
+---
+import '../styles/global.css';
+
+interface Props {
+    title: string;
+    activePage?: string;
+}
+
+const { title, activePage } = Astro.props;
+---
+
+<html lang="hu">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{title}</title>
+    </head>
+    <body class="bg-slate-950 text-white font-sans antialiased relative min-h-screen overflow-x-hidden">
+        <div id="image-bg" class="fixed inset-0 w-full h-full -z-10 overflow-hidden pointer-events-none opacity-100 transition-opacity duration-1000">
+			<img src="/media/back.jpg" alt="Pálháza háttér" class="w-full h-full object-cover filter brightness-50" />
+		</div>
+        <!-- FEJLÉC / NAVIGÁCIÓ (HÁTTÉR NÉLKÜL, CSAK MINIMÁLIS ELMOSÁSSAL) -->
+		<!-- FEJLÉC: STICKY POZÍCIÓ + FENTRŐL BEÚSZÓ ANIMÁCIÓ -->
+		<header class="sticky top-0 z-40 backdrop-blur-sm border-b border-white/10 animate-slide-down">
+			<div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+				<div class="flex items-center space-x-3">
+					<a href="/" class="text-2xl font-extrabold tracking-wider bg-gradient-to-r from-emerald-400 to-teal-200 bg-clip-text text-transparent hover:scale-105 transition-transform duration-300">
+						PÁLHÁZA VÁROS
+					</a>
+				</div>
+				<nav class="flex flex-wrap justify-center gap-2 text-sm font-semibold text-slate-200">
+					<a href="/" class={activePage === 'kezdolap' 
+						? "px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-emerald-300 shadow-sm transition-all duration-300" 
+						: "px-4 py-2 rounded-xl hover:bg-white/10 border border-transparent hover:border-white/15 hover:text-emerald-300 hover:-translate-y-0.5 transition-all duration-300"}>
+						Kezdőlap
+					</a>
+					<a href="/onkormanyzat" class={activePage === 'onkormanyzat' 
+						? "px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-emerald-300 shadow-sm transition-all duration-300" 
+						: "px-4 py-2 rounded-xl hover:bg-white/10 border border-transparent hover:border-white/15 hover:text-emerald-300 hover:-translate-y-0.5 transition-all duration-300"}>
+						Önkormányzat
+					</a>
+					<a href="/dokumentumtar" class={activePage === 'dokumentumtar' 
+						? "px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-emerald-300 shadow-sm transition-all duration-300" 
+						: "px-4 py-2 rounded-xl hover:bg-white/10 border border-transparent hover:border-white/15 hover:text-emerald-300 hover:-translate-y-0.5 transition-all duration-300"}>
+						Dokumentumtár
+					</a>
+					<a href="/rendelo" class={activePage === 'rendelo' 
+						? "px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-emerald-300 shadow-sm transition-all duration-300" 
+						: "px-4 py-2 rounded-xl hover:bg-white/10 border border-transparent hover:border-white/15 hover:text-emerald-300 hover:-translate-y-0.5 transition-all duration-300"}>
+						Egészségügyi Rendelő
+					</a>
+				</nav>
+			</div>
+		</header>
+
+        <!-- FŐ TARTALOM -->
+        <main>
+            <slot />
+        </main>
+
+        <!-- LÁBJEGYZÉK (HÁTTÉR NÉLKÜL, CSAK MINIMÁLIS ELMOSÁSSAL) -->
+		<footer class="backdrop-blur-sm border-t border-white/10 py-8 mt-20 relative z-10 text-center text-sm text-slate-300 animate-slide-up" style="animation-delay: 1.2s;">
+			<div class="max-w-7xl mx-auto px-4">
+				<p>&copy; 2026 Pálháza Város Önkormányzata. Minden jog fenntartva.</p>
+				<p class="mt-2 text-xs text-slate-400">
+					Copyright © 2026 <a href="https://k-tech.hu" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-300 underline transition-colors">K-Tech</a>. Minden jog fenntartva.
+				</p>
+			</div>
+		</footer>
+    </body>
+
+</html>

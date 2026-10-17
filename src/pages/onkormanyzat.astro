@@ -1,0 +1,125 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Önkormányzat - Pálháza Város" activePage="onkormanyzat">
+
+    <main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        <!-- FŐCÍM SZEKCIÓ -->
+        <div class="mb-12 text-center md:text-left">
+            <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm animate-slide-left">
+                Hivatalos Tájékoztatás
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4 animate-slide-left">
+                Pálháza Város Önkormányzata
+            </h1>
+            <p class="text-slate-300 max-w-2xl text-base md:text-lg animate-slide-left">
+                A Polgármesteri Hivatal elérhetőségei, tisztségviselői és az önkormányzati működés legfontosabb adatai.
+            </p>
+        </div>
+
+        <!-- KÉTOSZLOPOS RÁCS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            
+            <!-- 1. KÁRTYA: Animáció közvetlenül a kártyán -->
+            <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/15 shadow-xl h-full flex flex-col justify-between animate-slide-left" style="animation-delay: 1s;">
+                <div>
+                    <h2 class="text-2xl font-bold text-emerald-300 mb-6 flex items-center gap-3">
+                        <span>🏛️</span> Polgármesteri Hivatal
+                    </h2>
+                    <div class="space-y-4 text-slate-200 text-sm md:text-base">
+                        <p><strong class="text-white">Cím:</strong> 3994 Pálháza, Dózsa György út 123.</p>
+                        <p><strong class="text-white">Telefon:</strong> +36 47 370 001</p>
+                        <p><strong class="text-white">E-mail:</strong> hivatal@palhaza.hu</p>
+                        <p><strong class="text-white">Polgármester:</strong> Szebeni Endre</p>
+                        <p><strong class="text-white">Jegyző:</strong> Dr. Kovács Ágnes</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. KÁRTYA: Animáció közvetlenül a kártyán -->
+            <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/15 shadow-xl h-full flex flex-col justify-between animate-slide-right" style="animation-delay: 1s;">
+                <div>
+                    <h2 class="text-2xl font-bold text-emerald-300 mb-6 flex items-center gap-3">
+                        <span>🕒</span> Ügyfélfogadási Idő
+                    </h2>
+                    <div class="space-y-3 text-slate-200 text-sm md:text-base">
+                        <div class="flex justify-between border-b border-white/10 pb-2">
+                            <span>Hétfő:</span>
+                            <span class="font-semibold text-white">8:00 – 12:00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-2">
+                            <span>Kedd:</span>
+                            <span class="font-semibold text-slate-400">Nincs ügyfélfogadás</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-2">
+                            <span>Szerda:</span>
+                            <span class="font-semibold text-white">8:00 – 12:00 | 13:00 – 16:00</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-2">
+                            <span>Csütörtök:</span>
+                            <span class="font-semibold text-slate-400">Nincs ügyfélfogadás</span>
+                        </div>
+                        <div class="flex justify-between border-b border-white/10 pb-2">
+                            <span>Péntek:</span>
+                            <span class="font-semibold text-white">8:00 – 12:00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ALSÓ SZEKCIÓ -->
+        <div class="bg-emerald-900/40 backdrop-blur-md p-8 rounded-2xl border border-emerald-400/30 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl animate-slide-up" style="animation-delay: 2s;">
+            <div>
+                <h3 class="text-xl font-bold text-white mb-2">Hivatalos Rendeletek és Határozatok</h3>
+                <p class="text-slate-300 text-sm">Tekintse meg a képviselő-testület legfrissebb döntéseit és dokumentumait a digitális tárban.</p>
+            </div>
+            <a href="/dokumentumtar" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-3 rounded-xl shadow-lg transition-all duration-300 hover:scale-105 whitespace-nowrap">
+                Megnyitás &rarr;
+            </a>
+        </div>
+    </main>
+    	<script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 2. Kattintáskor: Kép visszahozása átfedéssel + elemek kifelé csúszása
+
+            const links = document.querySelectorAll('a[href^="/"]');
+
+            links.forEach(link => {
+                link.addEventListener("click", (e) => {
+                    const targetUrl = link.getAttribute("href");
+
+                    if (!targetUrl || targetUrl === "#") return;
+
+                    e.preventDefault();
+
+                    // Megkeressük a fő elemeket az aloldalon
+                    const mainElement = document.querySelector("main");
+                    const header = document.querySelector("header");
+                    const footer = document.querySelector("footer");
+                    const imageBg = document.getElementById("image-bg");
+
+                    // Ha van háttérkép elem, visszaállítjuk
+                    if (imageBg) {
+                        imageBg.style.display = "block";
+                        setTimeout(() => {
+                            imageBg.style.opacity = "1";
+                        }, 20);
+                    }
+
+                    // Kifelé csúsztatjuk a teljes <main> tartalmat, a fejlécet és a láblécet
+                    if (mainElement) mainElement.classList.add("animate-slide-up-out");
+                    if (header) header.classList.add("animate-slide-up-out");
+                    if (footer) footer.classList.add("animate-slide-down-out");
+
+                    // Várunk, amíg lefut az animáció, majd átlépünk
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 750);
+                });
+            });
+        });
+    </script>
+</Layout>

@@ -1,0 +1,209 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const turakEntries = await getCollection('turak');
+---
+
+<Layout title="Túraútvonalak - Pálháza Város" activePage="turautvonalak">
+
+    <main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        <div class="mb-12 text-center md:text-left">
+            <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm animate-slide-left">
+                Zempléni Aktív Turizmus
+            </span>
+            <h1 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4 animate-slide-left">
+                Túraútvonalak & Gyalogtúrák
+            </h1>
+            <p class="text-slate-300 max-w-2xl text-base md:text-lg animate-slide-left">
+                Fedezze fel a Zempléni-hegység védett erdeit, bérceit és romantikus patakvölgyeit.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {turakEntries.map((entry) => {
+                const tura = entry.data;
+                const kepekJson = JSON.stringify(tura.kepek || []);
+                const boritoKep = tura.kepek && tura.kepek.length > 0 ? tura.kepek[0] : null;
+
+                return (
+                    <div class="bg-white/10 backdrop-blur-md rounded-2xl border border-white/15 hover:border-emerald-400/50 transition-all duration-300 shadow-xl flex flex-col justify-between overflow-hidden group animate-slide-up" style="animation-delay: 1s;">
+                        
+                        <!-- BORÍTÓKÉP VAGY IKON FEJLÉC -->
+                        <div class="relative h-48 w-full overflow-hidden bg-emerald-950/40">
+                            {boritoKep ? (
+                                <img 
+                                    src={boritoKep} 
+                                    alt={tura.title} 
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer open-gallery-btn"
+                                    data-images={kepekJson}
+                                    data-title={tura.title}
+                                />
+                            ) : (
+                                <div class="w-full h-full flex items-center justify-center text-5xl">
+                                    {tura.ikon || "🥾"}
+                                </div>
+                            )}
+
+                            {tura.kepek && tura.kepek.length > 0 && (
+                                <button 
+                                    class="open-gallery-btn absolute bottom-3 right-3 bg-black/60 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/20 transition-all flex items-center gap-1.5"
+                                    data-images={kepekJson}
+                                    data-title={tura.title}>
+                                    📷 {tura.kepek.length} kép
+                                </button>
+                            )}
+                        </div>
+
+                        <!-- KÁRTYA TARTALOM -->
+                        <div class="p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">{tura.title}</h2>
+                                
+                                <div class="flex gap-2 my-4 text-xs font-semibold text-slate-200 bg-white/5 p-3 rounded-xl border border-white/10 justify-around">
+                                    <span>📏 {tura.tav}</span>
+                                    <span>📈 {tura.szint}</span>
+                                    <span class="text-emerald-300">💪 {tura.nehezseg}</span>
+                                </div>
+
+                                <p class="text-slate-300 text-sm leading-relaxed mb-6">{tura.leiras}</p>
+                            </div>
+
+                            <a 
+                                href={tura.gpxLink} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                class="inline-flex items-center justify-center gap-2 bg-emerald-600/80 hover:bg-emerald-500 text-white text-xs font-bold py-3 px-4 rounded-xl backdrop-blur-md border border-emerald-400/30 transition-all duration-300 shadow-md">
+                                <span>GPX Letöltés & Térkép</span>
+                                <span>🗺️</span>
+                            </a>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    </main>
+
+    <!-- KÉPNÉZEGETŐ MODAL (LIGHTBOX) -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col justify-between p-4 md:p-8">
+        <div class="flex justify-between items-center text-white z-10 max-w-6xl mx-auto w-full">
+            <div>
+                <h3 id="lightbox-title" class="text-xl font-bold"></h3>
+                <span id="lightbox-counter" class="text-xs text-slate-400"></span>
+            </div>
+            <button id="lightbox-close" class="text-3xl hover:text-emerald-400 transition-colors px-3 py-1">&times;</button>
+        </div>
+
+        <div class="relative flex-1 flex items-center justify-center my-4 max-w-6xl mx-auto w-full">
+            <button id="lightbox-prev" class="absolute left-2 md:left-4 z-20 text-white bg-black/50 hover:bg-emerald-600 p-3 rounded-full backdrop-blur-sm transition-all text-xl">&larr;</button>
+            
+            <img id="lightbox-img" src="" alt="Galéria kép" class="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl transition-all duration-300" />
+            
+            <button id="lightbox-next" class="absolute right-2 md:right-4 z-20 text-white bg-black/50 hover:bg-emerald-600 p-3 rounded-full backdrop-blur-sm transition-all text-xl">&rarr;</button>
+        </div>
+
+        <div></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const lightbox = document.getElementById("lightbox") as HTMLElement;
+            const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+            const lightboxTitle = document.getElementById("lightbox-title") as HTMLElement;
+            const lightboxCounter = document.getElementById("lightbox-counter") as HTMLElement;
+            const closeBtn = document.getElementById("lightbox-close");
+            const prevBtn = document.getElementById("lightbox-prev");
+            const nextBtn = document.getElementById("lightbox-next");
+
+            let currentImages: string[] = [];
+            let currentIndex = 0;
+
+            document.querySelectorAll(".open-gallery-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    const imagesData = target.getAttribute("data-images");
+                    const title = target.getAttribute("data-title") || "";
+
+                    if (imagesData) {
+                        currentImages = JSON.parse(imagesData);
+                        if (currentImages.length > 0) {
+                            currentIndex = 0;
+                            lightboxTitle.textContent = title;
+                            updateLightbox();
+                            lightbox.classList.remove("hidden");
+                            lightbox.classList.add("flex");
+                        }
+                    }
+                });
+            });
+
+            function updateLightbox() {
+                if (currentImages.length > 0) {
+                    lightboxImg.src = currentImages[currentIndex];
+                    lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+                }
+            }
+
+            nextBtn?.addEventListener("click", () => {
+                currentIndex = (currentIndex + 1) % currentImages.length;
+                updateLightbox();
+            });
+
+            prevBtn?.addEventListener("click", () => {
+                currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+                updateLightbox();
+            });
+
+            closeBtn?.addEventListener("click", () => {
+                lightbox.classList.add("hidden");
+                lightbox.classList.remove("flex");
+            });
+
+            document.addEventListener("keydown", (e) => {
+                if (!lightbox.classList.contains("hidden")) {
+                    if (e.key === "Escape") closeBtn?.click();
+                    if (e.key === "ArrowRight") nextBtn?.click();
+                    if (e.key === "ArrowLeft") prevBtn?.click();
+                }
+            });
+
+                    // 2. Kattintáskor: Kép visszahozása átfedéssel + elemek kifelé csúszása
+
+            const links = document.querySelectorAll('a[href^="/"]');
+
+            links.forEach(link => {
+                link.addEventListener("click", (e) => {
+                    const targetUrl = link.getAttribute("href");
+
+                    if (!targetUrl || targetUrl === "#") return;
+
+                    e.preventDefault();
+
+                    // Megkeressük a fő elemeket az aloldalon
+                    const mainElement = document.querySelector("main");
+                    const header = document.querySelector("header");
+                    const footer = document.querySelector("footer");
+                    const imageBg = document.getElementById("image-bg");
+
+                    // Ha van háttérkép elem, visszaállítjuk
+                    if (imageBg) {
+                        imageBg.style.display = "block";
+                        setTimeout(() => {
+                            imageBg.style.opacity = "1";
+                        }, 20);
+                    }
+
+                    // Kifelé csúsztatjuk a teljes <main> tartalmat, a fejlécet és a láblécet
+                    if (mainElement) mainElement.classList.add("animate-slide-up-out");
+                    if (header) header.classList.add("animate-slide-up-out");
+                    if (footer) footer.classList.add("animate-slide-down-out");
+
+                    // Várunk, amíg lefut az animáció, majd átlépünk
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 750);
+                });
+            });
+        });
+    </script>
+</Layout>

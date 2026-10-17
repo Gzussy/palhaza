@@ -1,0 +1,225 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+const latvanyossagok = await getCollection('latvanyossagok');
+---
+
+<Layout title="Látványosságok - Pálháza Város" activePage="latvanyossagok">
+    <main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+        <!-- FEJLÉC SZEKCIÓ -->
+        <div class="mb-12 text-center md:text-left animate-slide-left">
+            <span class="inline-block bg-emerald-800/80 text-emerald-200 border border-emerald-500/30 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-md shadow-md">
+                Fedezze Fel Pálházát
+            </span>
+            <h1 class="text-4xl md:text-6xl font-black text-white tracking-tight mb-4 drop-shadow-lg">
+                Helyi Látványosságok
+            </h1>
+            <p class="text-slate-200 max-w-2xl text-base md:text-lg font-normal drop-shadow-md leading-relaxed">
+                A kisvasúttól a bányászati múzeumig: Pálháza egyedülálló élményeket kínál a természet és a történelem kedvelőinek.
+            </p>
+        </div>
+
+<!-- KÁRTYÁK RÁCSA (Marad sima grid) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {latvanyossagok.map((item, index) => {
+                const data = item.data;
+                const kepekJson = JSON.stringify(data.kepek || []);
+                const boritoKep = data.kepek && data.kepek.length > 0 ? data.kepek[0] : null;
+                const delay = 0.2 + index * 0.1;
+
+                return (
+                    <div 
+                        style={`animation-delay: ${delay}s;`}
+                        class="bg-slate-900/50 backdrop-blur-xl rounded-3xl border border-white/10 hover:border-emerald-500/40 hover:bg-slate-900/60 transition-all duration-300 shadow-2xl flex flex-col justify-between overflow-hidden group animate-slide-up">
+                        
+                        <!-- BORÍTÓKÉP VAGY DEFAULT IKON FEJLÉC -->
+                        <div class="relative h-48 w-full overflow-hidden bg-emerald-950/40">
+                            {boritoKep ? (
+                                <img 
+                                    src={boritoKep} 
+                                    alt={data.title} 
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-pointer open-gallery-btn"
+                                    data-images={kepekJson}
+                                    data-title={data.title}
+                                />
+                            ) : (
+                                <div class="w-full h-full flex items-center justify-center text-5xl">
+                                    {data.ikon || "🏰"}
+                                </div>
+                            )}
+
+                            {data.kepek && data.kepek.length > 0 && (
+                                <button 
+                                    class="open-gallery-btn absolute bottom-3 right-3 bg-black/60 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg backdrop-blur-md border border-white/20 transition-all flex items-center gap-1.5"
+                                    data-images={kepekJson}
+                                    data-title={data.title}>
+                                    📷 {data.kepek.length} kép
+                                </button>
+                            )}
+                        </div>
+
+                        <!-- KÁRTYA TARTALOM -->
+                        <div class="p-8 flex-1 flex flex-col justify-between">
+                            <div>
+                                <!-- KATEGÓRIA -->
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2 block">
+                                    {data.kategoria}
+                                </span>
+
+                                <!-- CÍM -->
+                                <h2 class="text-2xl font-bold text-white mb-3 group-hover:text-emerald-300 transition-colors">
+                                    {data.title}
+                                </h2>
+
+                                <!-- LEÍRÁS -->
+                                <p class="text-slate-300 text-sm leading-relaxed mb-6 font-light">
+                                    {data.leiras}
+                                </p>
+                            </div>
+
+                            {data.kepek && data.kepek.length > 0 && (
+                                <button 
+                                    class="open-gallery-btn w-full inline-flex items-center justify-center gap-2 bg-emerald-800/60 hover:bg-emerald-600 text-white font-semibold py-2.5 rounded-xl border border-emerald-500/30 transition-all duration-300 text-sm"
+                                    data-images={kepekJson}
+                                    data-title={data.title}>
+                                    <span>Galéria megtekintése &rarr;</span>
+                                </button>
+                            )}
+                        </div>
+
+                    </div>
+                );
+            })}
+        </div>
+    </main>
+
+    <!-- KÉPNÉZEGETŐ MODAL (LIGHTBOX) -->
+    <div id="lightbox" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex flex-col justify-between p-4 md:p-8">
+        <!-- RÉSZLETEK ÉS BEZÁRÁS -->
+        <div class="flex justify-between items-center text-white z-10 max-w-6xl mx-auto w-full">
+            <div>
+                <h3 id="lightbox-title" class="text-xl font-bold"></h3>
+                <span id="lightbox-counter" class="text-xs text-slate-400"></span>
+            </div>
+            <button id="lightbox-close" class="text-3xl hover:text-emerald-400 transition-colors px-3 py-1">&times;</button>
+        </div>
+
+        <!-- FŐ KÉP ÉS NAVIGÁCIÓ -->
+        <div class="relative flex-1 flex items-center justify-center my-4 max-w-6xl mx-auto w-full">
+            <button id="lightbox-prev" class="absolute left-2 md:left-4 z-20 text-white bg-black/50 hover:bg-emerald-600 p-3 rounded-full backdrop-blur-sm transition-all text-xl">&larr;</button>
+            
+            <img id="lightbox-img" src="" alt="Galéria kép" class="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl transition-all duration-300" />
+            
+            <button id="lightbox-next" class="absolute right-2 md:right-4 z-20 text-white bg-black/50 hover:bg-emerald-600 p-3 rounded-full backdrop-blur-sm transition-all text-xl">&rarr;</button>
+        </div>
+
+        <div></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const lightbox = document.getElementById("lightbox") as HTMLElement;
+            const lightboxImg = document.getElementById("lightbox-img") as HTMLImageElement;
+            const lightboxTitle = document.getElementById("lightbox-title") as HTMLElement;
+            const lightboxCounter = document.getElementById("lightbox-counter") as HTMLElement;
+            const closeBtn = document.getElementById("lightbox-close");
+            const prevBtn = document.getElementById("lightbox-prev");
+            const nextBtn = document.getElementById("lightbox-next");
+
+            let currentImages: string[] = [];
+            let currentIndex = 0;
+
+            // Galéria megnyitása
+            document.querySelectorAll(".open-gallery-btn").forEach((btn) => {
+                btn.addEventListener("click", (e) => {
+                    const target = e.currentTarget as HTMLElement;
+                    const imagesData = target.getAttribute("data-images");
+                    const title = target.getAttribute("data-title") || "";
+
+                    if (imagesData) {
+                        currentImages = JSON.parse(imagesData);
+                        if (currentImages.length > 0) {
+                            currentIndex = 0;
+                            lightboxTitle.textContent = title;
+                            updateLightbox();
+                            lightbox.classList.remove("hidden");
+                            lightbox.classList.add("flex");
+                        }
+                    }
+                });
+            });
+
+            function updateLightbox() {
+                if (currentImages.length > 0) {
+                    lightboxImg.src = currentImages[currentIndex];
+                    lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+                }
+            }
+
+            // Léptetések
+            nextBtn?.addEventListener("click", () => {
+                currentIndex = (currentIndex + 1) % currentImages.length;
+                updateLightbox();
+            });
+
+            prevBtn?.addEventListener("click", () => {
+                currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+                updateLightbox();
+            });
+
+            // Bezárás
+            closeBtn?.addEventListener("click", () => {
+                lightbox.classList.add("hidden");
+                lightbox.classList.remove("flex");
+            });
+
+            // Billentyűzet navigáció (Esc, Nyilak)
+            document.addEventListener("keydown", (e) => {
+                if (!lightbox.classList.contains("hidden")) {
+                    if (e.key === "Escape") closeBtn?.click();
+                    if (e.key === "ArrowRight") nextBtn?.click();
+                    if (e.key === "ArrowLeft") prevBtn?.click();
+                }
+            });
+
+            // 2. Kattintáskor: Kép visszahozása átfedéssel + elemek kifelé csúszása
+
+            const links = document.querySelectorAll('a[href^="/"]');
+
+            links.forEach(link => {
+                link.addEventListener("click", (e) => {
+                    const targetUrl = link.getAttribute("href");
+
+                    if (!targetUrl || targetUrl === "#") return;
+
+                    e.preventDefault();
+
+                    // Megkeressük a fő elemeket az aloldalon
+                    const mainElement = document.querySelector("main");
+                    const header = document.querySelector("header");
+                    const footer = document.querySelector("footer");
+                    const imageBg = document.getElementById("image-bg");
+
+                    // Ha van háttérkép elem, visszaállítjuk
+                    if (imageBg) {
+                        imageBg.style.display = "block";
+                        setTimeout(() => {
+                            imageBg.style.opacity = "1";
+                        }, 20);
+                    }
+
+                    // Kifelé csúsztatjuk a teljes <main> tartalmat, a fejlécet és a láblécet
+                    if (mainElement) mainElement.classList.add("animate-slide-up-out");
+                    if (header) header.classList.add("animate-slide-up-out");
+                    if (footer) footer.classList.add("animate-slide-down-out");
+
+                    // Várunk, amíg lefut az animáció, majd átlépünk
+                    setTimeout(() => {
+                        window.location.href = targetUrl;
+                    }, 750);
+                });
+            });
+        });
+    </script>
+</Layout>

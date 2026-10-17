@@ -1,0 +1,87 @@
+backend:
+  name: github
+  repo: gzussy/palhaza
+  branch: main
+  client_id: Ov23liTeEBEwWZZbDXnJ
+
+# Itt ne legyen base_url, de ellenőrizd, hogy a dist mappa frissült-e!
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+
+  - name: "latvanyossagok"
+    label: "Látványosságok"
+    folder: "src/content/latvanyossagok"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Cím", name: "title", widget: "string"}
+      - {label: "Kategória", name: "kategoria", widget: "string"}
+      - {label: "Ikon (Emoji)", name: "ikon", widget: "string", required: false}
+      - {label: "Leírás", name: "leiras", widget: "text"}
+      - label: "Képek galéria"
+        name: "kepek"
+        widget: "list"
+        required: false
+        field: {label: "Kép", name: "kep", widget: "image"}
+
+  - name: "turak"
+    label: "Túraútvonalak"
+    folder: "src/content/turak"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Túra neve", name: "title", widget: "string"}
+      - {label: "Távolság (pl. 12.5 km)", name: "tav", widget: "string"}
+      - {label: "Szintemelkedés (pl. 380 m)", name: "szint", widget: "string"}
+      - {label: "Nehézség", name: "nehezseg", widget: "string"}
+      - {label: "Ikon (Emoji)", name: "ikon", widget: "string", required: false}
+      - {label: "GPX fájl / Térkép link (opcionális)", name: "gpxLink", widget: "string", required: false}
+      - {label: "Leírás", name: "leiras", widget: "text"}
+      - label: "Képek galéria"
+        name: "kepek"
+        widget: "list"
+        required: false
+        field: {label: "Kép", name: "kep", widget: "image"}
+
+  - name: "gasztro"
+    label: "Gasztro"
+    folder: "src/content/gasztro"
+    create: true
+    fields:
+      - {label: "Hely Neve", name: "title", widget: "string"}
+      - {label: "Kategória", name: "kategoria", widget: "string"}
+      - {label: "Cím / Helyszín", name: "cim", widget: "string"}
+      - {label: "Ikon (Emoji)", name: "ikon", widget: "string", required: false}
+      - {label: "Leírás", name: "leiras", widget: "text"}
+
+  - name: "esemenyek"
+    label: "Események"
+    folder: "src/content/esemenyek"
+    create: true
+    fields:
+      - {label: "Esemény Neve", name: "title", widget: "string"}
+      - {label: "Dátum", name: "datum", widget: "string"}
+      - {label: "Helyszín", name: "helyszin", widget: "string"}
+      - {label: "Ikon (Emoji)", name: "ikon", widget: "string", required: false}
+      - {label: "Leírás", name: "leiras", widget: "text"}
+
+  - name: "szallasok"
+    label: "Szállások"
+    folder: "src/content/szallasok"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Szállás neve", name: "title", widget: "string"}
+      - {label: "Típus", name: "tipus", widget: "string"}
+      - {label: "Kapacitás", name: "kapacitas", widget: "string"}
+      - {label: "Ikon (Emoji)", name: "ikon", widget: "string", required: false}
+      - {label: "Telefonszám", name: "tel", widget: "string"}
+      - {label: "Leírás", name: "leiras", widget: "text"}
+      - label: "Képek galéria"
+        name: "kepek"
+        widget: "list"
+        required: false
+        field: {label: "Kép", name: "kep", widget: "image"}

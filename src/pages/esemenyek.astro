@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const esemenyek = [
+	{
+		cim: "Pálházi Városnapok & Perlit Fesztivál",
+		datum: "2026. Augusztus 14–16.",
+		helyszín: "Pálházi Rendezvénytér",
+		leiras: "Kulturális műsorok, koncertfellépők, helyi kézműves vásár és hagyományos főzőverseny.",
+		ikon: "🎉"
+	},
+	{
+		cim: "Kisvasút Szezonnyitó Családi Nap",
+		datum: "2026. Május 1.",
+		helyszín: "Pálházi Állomás",
+		leiras: "Különjáratok, gyermekprogramok, kézműves foglalkozások és interaktív erdei bemutatók.",
+		ikon: "🚂"
+	},
+	{
+		cim: "Zempléni Őszi Túranapok",
+		datum: "2026. Október 10.",
+		helyszín: "Pálháza és környéke",
+		leiras: "Szervezett gyalogtúrák szakavatott túravezetőkkel a lombhullató hegyközi erdőkben.",
+		ikon: "🍂"
+	}
+];
+---
+
+<Layout title="Események - Pálháza Város" activePage="esemenyek">
+	<div class="fixed inset-0 w-full h-full -z-10 overflow-hidden">
+		<img src="/media/back.jpg" alt="Pálháza háttér" class="w-full h-full object-cover filter brightness-50" />
+	</div>
+
+	<main class="max-w-7xl mx-auto px-6 py-12 relative z-10">
+		<div class="mb-12 text-center md:text-left">
+			<span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-4 py-1.5 rounded-full text-xs font-semibold mb-4 backdrop-blur-sm">
+				Kulturális & Turisztikai Programok
+			</span>
+			<h1 class="text-3xl md:text-5xl font-black text-white tracking-tight mb-4">
+				Rendezvények & Események
+			</h1>
+			<p class="text-slate-300 max-w-2xl text-base md:text-lg">
+				Városnapok, fesztiválok, túrák és közösségi programok Pálházán.
+			</p>
+		</div>
+
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			{esemenyek.map((item) => (
+				<div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/15 hover:border-emerald-400/50 transition-all duration-300 shadow-xl flex flex-col justify-between group">
+					<div>
+						<div class="flex justify-between items-start mb-6">
+							<div class="w-14 h-14 bg-emerald-500/20 text-emerald-300 rounded-2xl flex items-center justify-center text-3xl border border-emerald-500/30">
+								{item.ikon}
+							</div>
+							<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full">
+								{item.datum}
+							</span>
+						</div>
+						
+						<h2 class="text-2xl font-bold text-white mb-2 group-hover:text-emerald-300 transition-colors">{item.cim}</h2>
+						<p class="text-xs text-slate-400 mb-4">📍 {item.helyszín}</p>
+						<p class="text-slate-300 text-sm leading-relaxed mb-6">{item.leiras}</p>
+					</div>
+
+					<a href="#" class="inline-flex items-center gap-2 text-emerald-400 font-semibold text-sm group-hover:translate-x-2 transition-transform">
+						<span>Részletes program</span>
+						<span>&rarr;</span>
+					</a>
+				</div>
+			))}
+		</div>
+	</main>
+</Layout>
